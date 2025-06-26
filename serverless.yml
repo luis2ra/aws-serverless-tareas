@@ -1,13 +1,15 @@
 service: tareas-api
 
-# frameworkVersion: '3'
+frameworkVersion: '4'
 
 provider:
   name: aws
   runtime: nodejs22.x
   region: us-east-1
   environment:
-    TABLA_TAREAS: TareasTable  
+    TABLA_TAREAS: TareasTable
+    COLATAREAS_URL:
+      Ref: ColaTareas
   iam:
     role:
       statements:
@@ -16,8 +18,13 @@ provider:
             - "dynamodb:PutItem"
             # - "dynamodb:Scan"
             - "dynamodb:Query"
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
           Resource:
             - Fn::GetAtt: [TareasTable, Arn]
+            - Fn::GetAtt: [ColaTareas, Arn]
 
 functions:
   crearTarea:
@@ -32,6 +39,14 @@ functions:
       - httpApi:
           path: /tareas
           method: get
+  procesarTarea:
+    handler: src/handlers/procesarTarea.procesarTarea
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ColaTareas
+              - Arn
 
 resources:
   Resources:
@@ -50,3 +65,7 @@ resources:
             KeyType: HASH
           - AttributeName: fecha_id
             KeyType: RANGE
+    ColaTareas:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ColaTareas
