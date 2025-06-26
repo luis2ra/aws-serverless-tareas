@@ -1,20 +1,100 @@
-# Tareas Serverless en AWS con DynamoDB
+# 🧠 Proyecto Serverless Tareas
 
-Este proyecto es una API simple y serverless para crear y consultar tareas por usuario, utilizando:
+Este proyecto es una aplicación backend construida con **AWS Lambda**, **DynamoDB**, y **Serverless Framework**. Se enfoca en aplicar buenas prácticas modernas de arquitectura en la nube y está organizado en ramas (`branches`) para representar etapas progresivas de aprendizaje y desarrollo profesional.
 
-- AWS Lambda
-- DynamoDB (claves compuestas)
-- API Gateway (HTTP API)
-- Serverless Framework
+---
 
-## 🧱 Arquitectura
+## 📦 Objetivo del Proyecto
 
-- `POST /tareas`: crea una tarea asociada a un usuario, usando `PK = usuario` y `SK = fecha#id`.
-- `GET /tareas?usuario=...&fecha=...`: consulta las tareas de un usuario, con filtro opcional por fecha.
+Simular un sistema de gestión de tareas por usuario donde:
 
-## 🚀 Despliegue
+- Las tareas se crean mediante API REST.
+- Se almacenan en DynamoDB.
+- La arquitectura evoluciona hacia un sistema **desacoplado, escalable y event-driven**.
+- Se integran progresivamente componentes como **SQS, SNS, PostgreSQL/Aurora, Terraform y pruebas automatizadas**.
 
-### 1. Instalar dependencias
+---
+
+## 🧱 Estructura del Proyecto
+
+```
+.
+├── src/
+│   ├── handlers/
+│   │   ├── crearTarea.js
+│   │   ├── listarTareas.js
+│   ├── utils/
+│   │   └── dynamoClient.js
+│   └── events/
+├── serverless.yml
+├── README.md
+├── package.json
+└── .gitignore
+```
+
+## 🚧 Roadmap de Ramas (Progresión Técnica)
+
+| Rama | Descripción | Habilidades y Tecnologías |
+|------|-------------|----------------------------|
+| `main` | Proyecto base inicial | Lambda, DynamoDB, Serverless Framework |
+| `base/estructura-refactorizada` | Refactor de estructura de carpetas y código modular | Clean code, reutilización de clientes, escalabilidad |
+| `feature/sqs-async-processing` | Agrega cola SQS + Lambda consumidora | AWS SQS, Event-driven architecture, asincronía |
+| `feature/sns-notifications` | Publicación de eventos a SNS + Lambda suscrita | SNS, fan-out, patrones de notificación |
+| `feature/alembic-terraform-db` | Introduce Terraform + Alembic para PostgreSQL | Infraestructura como código, migraciones |
+| `feature/aurora-postgresql` | Sustituye DynamoDB por Aurora PostgreSQL | RDS, SQL, conexiones seguras desde Lambda |
+| `feature/serverless-plugins-monitoring` | Plugins Serverless y observabilidad | Prune, Logs, métricas y trazas |
+| `feature/testing-coverage` | Pruebas unitarias con mocks | Vitest o Jest, testing de funciones Lambda |
+| `feature/domain-events-payloads` | Payloads enriquecidos por tipo de evento | Domain-driven design, arquitectura limpia |
+
+## 🔧 Comandos de Uso
+
+### 📍 Instalación
 
 ```bash
 npm install
+```
+
+### 🧪 Ejecutar localmente
+
+```bash
+serverless offline start
+```
+
+### 🧪 Crear tarea (POST)
+
+```bash
+curl -X POST http://localhost:3000/tareas \
+  -H "Content-Type: application/json" \
+  -d '{"usuario": "luis", "descripcion": "leer documentación"}'
+```
+
+### 🧪 Listar tareas por usuario (GET)
+
+```bash
+curl "http://localhost:3000/tareas?usuario=luis"
+```
+
+### 🧪 Filtrar por fecha
+
+```bash
+curl "http://localhost:3000/tareas?usuario=luis&fecha=2025-06-26"
+```
+
+## ✅ Próximo paso
+
+→ Crear la rama `feature/sqs-async-processing` y añadir una cola SQS para tareas.
+
+## 🧠 Skills cubiertos
+
+- ✅ AWS Lambda + API Gateway
+- ✅ DynamoDB (NoSQL)
+- ✅ Arquitectura event-driven (SQS/SNS)
+- ✅ Infraestructura como código
+- ✅ PostgreSQL + Aurora + Alembic
+- ✅ Testing
+- ✅ Organización profesional por ramas
+
+## ✍️ Autor
+
+Luis Altuve  
+Este proyecto forma parte de un roadmap técnico enfocado en aplicar a posiciones como **Backend Developer Cloud / Serverless Engineer**.
