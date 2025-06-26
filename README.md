@@ -38,8 +38,8 @@ Simular un sistema de gestión de tareas por usuario donde:
 |------|-------------|----------------------------|
 | `main` | Proyecto base inicial | Lambda, DynamoDB, Serverless Framework |
 | `base/estructura-refactorizada` | Refactor de estructura de carpetas y código modular | Clean code, reutilización de clientes, escalabilidad |
-| `feature/sqs-async-processing` | Agrega cola SQS + Lambda consumidora | AWS SQS, Event-driven architecture, asincronía |
-| `feature/sns-notifications` | Publicación de eventos a SNS + Lambda suscrita | SNS, fan-out, patrones de notificación |
+| `feature/01-sqs-async-processing` | Agrega cola SQS + Lambda consumidora | AWS SQS, Event-driven architecture, asincronía |
+| `feature/02-sns-notifications` | Publicación de eventos a SNS + Lambda suscrita | SNS, fan-out, patrones de notificación |
 | `feature/alembic-terraform-db` | Introduce Terraform + Alembic para PostgreSQL | Infraestructura como código, migraciones |
 | `feature/aurora-postgresql` | Sustituye DynamoDB por Aurora PostgreSQL | RDS, SQL, conexiones seguras desde Lambda |
 | `feature/serverless-plugins-monitoring` | Plugins Serverless y observabilidad | Prune, Logs, métricas y trazas |
@@ -82,7 +82,7 @@ curl "http://localhost:3000/tareas?usuario=luis&fecha=2025-06-26"
 
 ## ✅ Próximo paso
 
-→ Crear la rama `feature/sqs-async-processing` y añadir una cola SQS para tareas.
+→ Crear la rama `feature/01-sqs-async-processing` y añadir una cola SQS para tareas.
 
 ## 🧠 Skills cubiertos
 
