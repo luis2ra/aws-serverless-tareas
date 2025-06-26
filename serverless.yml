@@ -1,0 +1,52 @@
+service: tareas-api
+
+# frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  environment:
+    TABLA_TAREAS: TareasTable  
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            # - "dynamodb:Scan"
+            - "dynamodb:Query"
+          Resource:
+            - Fn::GetAtt: [TareasTable, Arn]
+
+functions:
+  crearTarea:
+    handler: handler.crearTarea
+    events:
+      - httpApi:
+          path: /tareas
+          method: post
+  listarTareas:
+    handler: handler.listarTareas
+    events:
+      - httpApi:
+          path: /tareas
+          method: get
+
+resources:
+  Resources:
+    TareasTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TareasTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: usuario
+            AttributeType: S
+          - AttributeName: fecha_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: usuario
+            KeyType: HASH
+          - AttributeName: fecha_id
+            KeyType: RANGE
