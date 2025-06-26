@@ -21,13 +21,13 @@ provider:
 
 functions:
   crearTarea:
-    handler: handler.crearTarea
+    handler: src/handlers/crearTarea.crearTarea
     events:
       - httpApi:
           path: /tareas
           method: post
   listarTareas:
-    handler: handler.listarTareas
+    handler: src/handlers/listarTareas.listarTareas
     events:
       - httpApi:
           path: /tareas
