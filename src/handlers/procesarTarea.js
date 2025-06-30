@@ -1,3 +1,5 @@
+const AWS = require('aws-sdk');
+const sns = new AWS.SNS();
 const { dynamo } = require('../utils/dynamoClient');
 
 module.exports.procesarTarea = async (event) => {
@@ -9,9 +11,19 @@ module.exports.procesarTarea = async (event) => {
         TableName: process.env.TABLA_TAREAS,
         Item: tarea,
       }).promise();
-      console.log("✅ Tarea procesada:", tarea);
+
+      await sns.publish({
+        TopicArn: process.env.SNS_TAREA_PROCESADA_ARN,
+        Subject: "Tarea Procesada",
+        Message: JSON.stringify({
+          evento: "TAREA_PROCESADA",
+          tarea,
+        }),
+      }).promise();
+
+      console.log("✅ Tarea procesada y notificada:", tarea);
     } catch (err) {
-      console.error("❌ Error al guardar tarea:", tarea, err);
+      console.error("❌ Error procesando tarea:", tarea, err);
     }
   }
 

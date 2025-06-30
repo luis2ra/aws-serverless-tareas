@@ -10,6 +10,8 @@ provider:
     TABLA_TAREAS: TareasTable
     COLATAREAS_URL:
       Ref: ColaTareas
+    SNS_TAREA_PROCESADA_ARN:
+      Ref: TareaProcesadaTopic
   iam:
     role:
       statements:
@@ -22,31 +24,57 @@ provider:
             - sqs:ReceiveMessage
             - sqs:DeleteMessage
             - sqs:GetQueueAttributes
+            - sns:Publish
           Resource:
             - Fn::GetAtt: [TareasTable, Arn]
             - Fn::GetAtt: [ColaTareas, Arn]
+            - Ref: TareaProcesadaTopic
+
+# package:
+#   individually: true
+#   patterns:
+#     - "!*/**"
 
 functions:
   crearTarea:
     handler: src/handlers/crearTarea.crearTarea
+    # package:
+    #   patterns:
+    #     - src/handlers/crearTarea.js
+    #     - node_modules/aws-sdk/**
     events:
       - httpApi:
           path: /tareas
           method: post
   listarTareas:
     handler: src/handlers/listarTareas.listarTareas
+    # package:
+    #   patterns:
+    #     - src/handlers/listarTareas.js
+    #     - src/utils/dynamoClient.js
+    #     - node_modules/aws-sdk/**
     events:
       - httpApi:
           path: /tareas
           method: get
   procesarTarea:
     handler: src/handlers/procesarTarea.procesarTarea
+    # package:
+    #   patterns:
+    #     - src/handlers/procesarTarea.js
+    #     - src/utils/dynamoClient.js
+    #     - node_modules/aws-sdk/**
     events:
       - sqs:
           arn:
             Fn::GetAtt:
               - ColaTareas
               - Arn
+  notificarTarea:
+    handler: src/handlers/notificarTarea.notificarTarea
+    # package:
+    #   patterns:
+    #     - src/handlers/notificarTarea.js
 
 resources:
   Resources:
@@ -65,7 +93,32 @@ resources:
             KeyType: HASH
           - AttributeName: fecha_id
             KeyType: RANGE
+
     ColaTareas:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ColaTareas
+
+    TareaProcesadaTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: TareaProcesadaTopic
+    
+    NotificacionSuscripcion:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: TareaProcesadaTopic
+        Protocol: lambda
+        Endpoint:
+          Fn::GetAtt: [NotificarTareaLambdaFunction, Arn]
+
+    PermisoInvocacionSNS:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Ref: NotificarTareaLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: sns.amazonaws.com
+        SourceArn:
+          Ref: TareaProcesadaTopic
