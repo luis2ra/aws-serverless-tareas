@@ -22,6 +22,8 @@ Simular un sistema de gestión de tareas por usuario donde:
 - Encolado de tareas en AWS SQS desde la función `crearTarea`
 - Procesamiento asíncrono de tareas con Lambda `procesarTarea`
 - Persistencia final en DynamoDB
+- Publicación de evento SNS al procesar tareas
+- Notificación mediante Lambda suscrita al topic SNS
 
 ---
 
@@ -33,6 +35,7 @@ Simular un sistema de gestión de tareas por usuario donde:
 │   ├── handlers/
 │   │   ├── crearTarea.js
 │   │   ├── listarTareas.js
+│   │   ├── notificarTarea.js
 │   │   ├── procesarTarea.js
 │   ├── utils/
 │   │   └── dynamoClient.js
@@ -51,7 +54,7 @@ Simular un sistema de gestión de tareas por usuario donde:
 | `base/estructura-refactorizada` | Refactor de estructura de carpetas y código modular | Clean code, reutilización de clientes, escalabilidad |
 | `feature/01-sqs-async-processing` | Agrega cola SQS + Lambda consumidora | AWS SQS, Event-driven architecture, asincronía |
 | `feature/02-sns-notifications` | Publicación de eventos a SNS + Lambda suscrita | SNS, fan-out, patrones de notificación |
-| `feature/alembic-terraform-db` | Introduce Terraform + Alembic para PostgreSQL | Infraestructura como código, migraciones |
+| `feature/03-alembic-terraform-db` | Introduce Terraform + Alembic para PostgreSQL | Infraestructura como código, migraciones |
 | `feature/aurora-postgresql` | Sustituye DynamoDB por Aurora PostgreSQL | RDS, SQL, conexiones seguras desde Lambda |
 | `feature/serverless-plugins-monitoring` | Plugins Serverless y observabilidad | Prune, Logs, métricas y trazas |
 | `feature/testing-coverage` | Pruebas unitarias con mocks | Vitest o Jest, testing de funciones Lambda |
@@ -93,16 +96,17 @@ curl "http://localhost:3000/tareas?usuario=luis&fecha=2025-06-26"
 
 ## ✅ Próximo paso
 
-→ Crear la rama `feature/02-sns-notifications` y publicar eventos al procesar tareas.
+→ Crear la rama `feature/03-alembic-terraform-db` e integrar Terraform y Alembic para bases de datos relacionales.
 
 ## 🧠 Skills cubiertos
 
 - ✅ AWS Lambda + API Gateway
 - ✅ DynamoDB (NoSQL)
 - ✅ Arquitectura event-driven (SQS/SNS)
-- ✅ Infraestructura como código
-- ✅ PostgreSQL + Aurora + Alembic
-- ✅ Testing
+- ✅ Arquitectura event-driven (SQS/SNS con fan-out)
+- ⏳ Infraestructura como código
+- ⏳ PostgreSQL + Aurora + Alembic
+- ⏳ Testing
 - ✅ Organización profesional por ramas
 
 ## ✍️ Autor
