@@ -1,4 +1,5 @@
-const { dynamo } = require('../utils/dynamoClient');
+const AWS = require('aws-sdk');
+const sqs = new AWS.SQS();
 const { v4: uuidv4 } = require('uuid');
 
 module.exports.crearTarea = async (event) => {
@@ -21,13 +22,13 @@ module.exports.crearTarea = async (event) => {
     descripcion,
   };
 
-  await dynamo.put({
-    TableName: process.env.TABLA_TAREAS,
-    Item: item
+  await sqs.sendMessage({
+    QueueUrl: process.env.COLATAREAS_URL,
+    MessageBody: JSON.stringify(item),
   }).promise();
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ mensaje: "Tarea creada", item }),
+    body: JSON.stringify({ mensaje: "Tarea encolada", item }),
   };
 };
